@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Produk — Malzz Pedia</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="navbar">
+  <a href="/" class="nav-logo">Malzz Pedia</a>
+  <ul class="nav-links">
+    <li><a href="/">Beranda</a></li>
+    <li><a href="/topup">Top Up</a></li>
+    <li><a href="/products" class="active">Produk</a></li>
+    <li><a href="/status">Cek Status</a></li>
+    <li><a href="/panduan">Panduan</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrap">
+  <div class="container section">
+    <div class="page-header">
+      <h1>Semua Produk</h1>
+      <p>Temukan semua game dan layanan yang tersedia di Malzz Pedia.</p>
+    </div>
+
+    <!-- Search & Filter -->
+    <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1.75rem;flex-wrap:wrap;">
+      <div class="search-wrap" style="flex:1;min-width:200px;">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" class="form-control" id="search-input" placeholder="Cari produk..." oninput="filterProducts()">
+      </div>
+      <span id="product-count" style="font-size:0.85rem;color:var(--muted);white-space:nowrap;"></span>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="product-grid" id="product-grid">
+      <div style="grid-column:1/-1;" class="empty-state">
+        <div class="spinner" style="margin:0 auto;"></div>
+        <p style="margin-top:0.75rem;">Memuat produk...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+let allProducts = [];
+
+async function loadProducts() {
+  try {
+    const res = await fetch('/produk');
+    const json = await res.json();
+    if (!json.success) throw new Error();
+    allProducts = json.data;
+    renderProducts(allProducts);
+    document.getElementById('product-count').textContent = `${allProducts.length} produk`;
+  } catch(e) {
+    document.getElementById('product-grid').innerHTML = `<div style="grid-column:1/-1;" class="empty-state"><div class="icon">⚠️</div><h3>Gagal memuat produk</h3></div>`;
+  }
+}
+
+function filterProducts() {
+  const q = document.getElementById('search-input').value.toLowerCase();
+  const filtered = allProducts.filter(p =>
+    p.nama?.toLowerCase().includes(q) ||
+    p.deks?.toLowerCase().includes(q) ||
+    p.fulldesk?.toLowerCase().includes(q)
+  );
+  renderProducts(filtered);
+  document.getElementById('product-count').textContent = `${filtered.length} produk`;
+}
+
+function renderProducts(list) {
+  const grid = document.getElementById('product-grid');
+  if (!list.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;" class="empty-state"><div class="icon">📦</div><h3>Produk tidak ditemukan</h3><p>Coba kata kunci lain.</p></div>`;
+    return;
+  }
+  grid.innerHTML = list.map(p => `
+    <a href="${p.linkorder || '/topup'}" class="product-card" target="${p.linkorder ? '_blank' : '_self'}">
+      ${p.imageurl
+        ? `<img src="${p.imageurl}" alt="${p.nama}" class="product-card-img" onerror="this.parentElement.querySelector('.placeholder')?.remove(); this.style.display='none'">`
+        : `<div class="product-card-img-placeholder">🎮</div>`
+      }
+      <div class="product-card-body">
+        <div class="product-card-name">${p.nama}</div>
+        <div class="product-card-desc">${p.deks || p.fulldesk || 'Tersedia di Malzz Pedia'}</div>
+      </div>
+      <div class="product-card-footer">
+        <span class="badge badge-success">Aktif</span>
+        <span style="font-size:0.8rem;color:var(--primary);font-weight:600;">Top Up →</span>
+      </div>
+    </a>
+  `).join('');
+}
+
+loadProducts();
+</script>
+</body>
+</html>
