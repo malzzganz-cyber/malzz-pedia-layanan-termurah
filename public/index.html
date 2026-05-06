@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Malzz Pedia — Top Up Game Murah & Cepat</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/" class="nav-logo">Malzz Pedia</a>
+  <ul class="nav-links">
+    <li><a href="/" class="active">Beranda</a></li>
+    <li><a href="/topup">Top Up</a></li>
+    <li><a href="/products">Produk</a></li>
+    <li><a href="/status">Cek Status</a></li>
+    <li><a href="/panduan">Panduan</a></li>
+    <li><a href="/topup" class="nav-cta">Mulai Top Up</a></li>
+  </ul>
+  <div class="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<div class="page-wrap">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="hero-orb orb1"></div>
+      <div class="hero-orb orb2"></div>
+      <div class="hero-orb orb3"></div>
+    </div>
+    <div class="container">
+      <div class="hero-content fade-in">
+        <div class="hero-badge"><span class="dot"></span> Trusted Top Up Platform</div>
+        <h1>Top Up Game<br><span class="grad">Lebih Mudah,</span><br>Lebih Hemat.</h1>
+        <p class="hero-desc">Platform top up game terpercaya dengan harga kompetitif, proses instan, dan ratusan pilihan layanan untuk semua game favoritmu.</p>
+        <div class="hero-actions">
+          <a href="/topup" class="btn btn-primary btn-lg">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            Top Up Sekarang
+          </a>
+          <a href="/products" class="btn btn-secondary btn-lg">Lihat Produk</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <div class="stat-num">500<span>+</span></div>
+            <div class="stat-label">Layanan tersedia</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">99<span>%</span></div>
+            <div class="stat-label">Transaksi sukses</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">&lt;2<span>m</span></div>
+            <div class="stat-label">Waktu proses</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="glow-line"></div>
+
+  <!-- FEATURES -->
+  <section class="section">
+    <div class="container">
+      <div class="section-heading fade-in">
+        <h2>Kenapa Pilih <span style="background: linear-gradient(135deg, var(--primary), var(--pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Malzz Pedia?</span></h2>
+        <p>Dirancang untuk pengalaman top up yang cepat, aman, dan tanpa ribet.</p>
+      </div>
+      <div class="grid-3 fade-in-2">
+        <div class="card" style="border-top: 2px solid var(--primary);">
+          <div class="feature-icon" style="background: rgba(124,106,255,0.1);">⚡</div>
+          <h3 style="font-weight: 700; margin-bottom: 0.5rem;">Proses Instan</h3>
+          <p style="color: var(--muted2); font-size: 0.875rem; line-height: 1.7;">Item langsung masuk ke akun game kamu dalam hitungan menit setelah pembayaran dikonfirmasi.</p>
+        </div>
+        <div class="card" style="border-top: 2px solid var(--pink);">
+          <div class="feature-icon" style="background: rgba(255,77,141,0.1);">🔒</div>
+          <h3 style="font-weight: 700; margin-bottom: 0.5rem;">Aman & Terpercaya</h3>
+          <p style="color: var(--muted2); font-size: 0.875rem; line-height: 1.7;">Sistem keamanan berlapis untuk setiap transaksi. Data dan akun game kamu selalu terlindungi.</p>
+        </div>
+        <div class="card" style="border-top: 2px solid var(--teal);">
+          <div class="feature-icon" style="background: rgba(34,211,238,0.1);">💰</div>
+          <h3 style="font-weight: 700; margin-bottom: 0.5rem;">Harga Terbaik</h3>
+          <p style="color: var(--muted2); font-size: 0.875rem; line-height: 1.7;">Harga kompetitif dengan kualitas layanan premium. Hemat lebih banyak untuk setiap transaksi.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POPULAR PRODUCTS -->
+  <section class="section" style="padding-top: 0;">
+    <div class="container">
+      <div class="section-heading">
+        <h2>Produk Populer</h2>
+        <p>Pilih dari berbagai game dan layanan yang tersedia.</p>
+      </div>
+      <div class="product-grid" id="featured-products">
+        <div class="empty-state"><div class="spinner"></div></div>
+      </div>
+      <div style="text-align: center; margin-top: 2rem;">
+        <a href="/products" class="btn btn-secondary">Lihat Semua Produk</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="glow-line"></div>
+
+  <!-- HOW IT WORKS -->
+  <section class="section">
+    <div class="container">
+      <div class="section-heading">
+        <h2>Cara Top Up</h2>
+        <p>Tiga langkah mudah untuk top up game favoritmu.</p>
+      </div>
+      <div class="grid-3">
+        <div style="text-align: center; padding: 1.5rem;">
+          <div style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), #9b8aff); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin: 0 auto 1.25rem; box-shadow: 0 8px 32px var(--primary-glow);">1</div>
+          <h3 style="font-weight: 700; margin-bottom: 0.5rem;">Pilih Layanan</h3>
+          <p style="color: var(--muted2); font-size: 0.875rem;">Pilih game dan nominal top up yang kamu inginkan.</p>
+        </div>
+        <div style="text-align: center; padding: 1.5rem;">
+          <div style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, var(--pink), #ff8c5a); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin: 0 auto 1.25rem; box-shadow: 0 8px 32px var(--pink-glow);">2</div>
+          <h3 style="font-weight: 700; margin-bottom: 0.5rem;">Bayar</h3>
+          <p style="color: var(--muted2); font-size: 0.875rem;">Lakukan pembayaran via QRIS atau transfer bank.</p>
+        </div>
+        <div style="text-align: center; padding: 1.5rem;">
+          <div style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, var(--teal), #22d3ee); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin: 0 auto 1.25rem; box-shadow: 0 8px 32px rgba(34,211,238,0.2);">3</div>
+          <h3 style="font-weight: 700; margin-bottom: 0.5rem;">Item Masuk</h3>
+          <p style="color: var(--muted2); font-size: 0.875rem;">Top up diproses otomatis, item langsung masuk.</p>
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 1rem;">
+        <a href="/topup" class="btn btn-primary btn-lg">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Mulai Sekarang
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div class="nav-logo">Malzz Pedia</div>
+          <p>Platform top up game terpercaya dengan harga terbaik dan proses cepat.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Layanan</h4>
+          <ul>
+            <li><a href="/topup">Top Up</a></li>
+            <li><a href="/products">Produk</a></li>
+            <li><a href="/status">Cek Status</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Info</h4>
+          <ul>
+            <li><a href="/panduan">Panduan</a></li>
+            <li><a href="/status">Status Order</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; 2025 Malzz Pedia. All rights reserved.</div>
+    </div>
+  </footer>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+function toggleMenu() {
+  const links = document.querySelector('.nav-links');
+  links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
+}
+
+async function loadFeaturedProducts() {
+  const el = document.getElementById('featured-products');
+  try {
+    const res = await fetch('/produk');
+    const json = await res.json();
+    if (!json.success || !json.data.length) {
+      el.innerHTML = '<div class="empty-state"><div class="icon">📦</div><h3>Belum ada produk</h3><p>Produk segera hadir.</p></div>';
+      return;
+    }
+    const items = json.data.slice(0, 8);
+    el.innerHTML = items.map(p => `
+      <a href="${p.linkorder || '/topup'}" class="product-card">
+        ${p.imageurl
+          ? `<img src="${p.imageurl}" alt="${p.nama}" class="product-card-img" onerror="this.style.display='none'">`
+          : `<div class="product-card-img-placeholder">🎮</div>`}
+        <div class="product-card-body">
+          <div class="product-card-name">${p.nama}</div>
+          <div class="product-card-desc">${p.deks || ''}</div>
+        </div>
+        <div class="product-card-footer">
+          <span class="badge badge-purple">Tersedia</span>
+          <span style="font-size:0.8rem; color: var(--muted2);">Top Up →</span>
+        </div>
+      </a>
+    `).join('');
+  } catch(e) {
+    el.innerHTML = '<div class="empty-state"><div class="icon">📦</div><h3>Gagal memuat produk</h3></div>';
+  }
+}
+
+loadFeaturedProducts();
+</script>
+</body>
+</html>
