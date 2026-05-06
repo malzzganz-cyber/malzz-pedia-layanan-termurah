@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Admin — Malzz Pedia</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="login-page">
+  <div class="hero-bg">
+    <div class="hero-orb orb1"></div>
+    <div class="hero-orb orb2"></div>
+  </div>
+
+  <div class="login-card fade-in">
+    <div class="login-logo">
+      <div class="login-logo-text">Malzz Pedia</div>
+      <p>Admin Panel — Masuk untuk lanjutkan</p>
+    </div>
+
+    <form onsubmit="doLogin(event)">
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <div class="input-wrap">
+          <svg class="input-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <input type="text" class="form-control" id="username" placeholder="Username admin" autocomplete="username" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="input-wrap">
+          <svg class="input-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <input type="password" class="form-control" id="password" placeholder="Password" autocomplete="current-password" required>
+        </div>
+      </div>
+
+      <div id="error-msg" style="display:none;margin-bottom:1rem;padding:0.75rem 1rem;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:var(--radius-sm);font-size:0.85rem;color:var(--danger);">
+        Username atau password salah.
+      </div>
+
+      <button type="submit" class="btn btn-primary w-full" id="login-btn" style="width:100%;justify-content:center;border-radius:var(--radius-sm);">
+        Masuk
+      </button>
+    </form>
+
+    <div style="text-align:center;margin-top:1.5rem;">
+      <a href="/" style="font-size:0.8rem;color:var(--muted);text-decoration:none;">← Kembali ke beranda</a>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// Redirect if already logged in
+async function checkAuth() {
+  try {
+    const res = await fetch('/api/mutasi', { method: 'GET' });
+    if (res.status === 200) window.location.href = '/admin';
+  } catch(e) {}
+}
+checkAuth();
+
+async function doLogin(e) {
+  e.preventDefault();
+  const btn = document.getElementById('login-btn');
+  const errEl = document.getElementById('error-msg');
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner" style="width:16px;height:16px;"></div> Masuk...';
+  errEl.style.display = 'none';
+
+  try {
+    const res = await fetch('/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const json = await res.json();
+    if (json.success) {
+      window.location.href = '/admin';
+    } else {
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.innerHTML = 'Masuk';
+    }
+  } catch(e) {
+    errEl.textContent = 'Terjadi kesalahan. Coba lagi.';
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.innerHTML = 'Masuk';
+  }
+}
+</script>
+</body>
+</html>
