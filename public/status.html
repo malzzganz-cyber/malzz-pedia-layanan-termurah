@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cek Status — Malzz Pedia</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="navbar">
+  <a href="/" class="nav-logo">Malzz Pedia</a>
+  <ul class="nav-links">
+    <li><a href="/">Beranda</a></li>
+    <li><a href="/topup">Top Up</a></li>
+    <li><a href="/products">Produk</a></li>
+    <li><a href="/status" class="active">Cek Status</a></li>
+    <li><a href="/panduan">Panduan</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrap">
+  <div class="container section">
+    <div style="max-width:640px;margin:0 auto;">
+      <div class="page-header">
+        <h1>Cek Status Order</h1>
+        <p>Masukkan ID order atau ID transaksi untuk mengecek status.</p>
+      </div>
+
+      <!-- Search Form -->
+      <div class="card mb-3">
+        <div class="form-group" style="margin-bottom:0.75rem;">
+          <label class="form-label">ID Order / ID Transaksi</label>
+          <div style="display:flex;gap:0.75rem;">
+            <input type="text" class="form-control" id="order-id-input" placeholder="Masukkan ID order kamu...">
+            <button class="btn btn-primary" onclick="cekStatus()" id="cek-btn" style="flex-shrink:0;">Cek</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result -->
+      <div id="result-wrap"></div>
+
+      <!-- Info -->
+      <div class="info-box mt-3">
+        <strong>ℹ️ Info:</strong> ID transaksi dikirim setelah kamu membuat order. Simpan ID transaksi sebagai bukti pembelian.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const orderId = params.get('orderId');
+const trxId = params.get('trxId');
+
+if (orderId) {
+  document.getElementById('order-id-input').value = orderId;
+  window.addEventListener('DOMContentLoaded', () => cekStatusOrder(orderId));
+} else if (trxId) {
+  document.getElementById('order-id-input').value = trxId;
+}
+
+async function cekStatus() {
+  const id = document.getElementById('order-id-input').value.trim();
+  if (!id) return showToast('Masukkan ID order atau transaksi', 'error');
+  await cekStatusOrder(id);
+}
+
+async function cekStatusOrder(id) {
+  const btn = document.getElementById('cek-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner" style="width:14px;height:14px;"></div>';
+  const wrap = document.getElementById('result-wrap');
+  wrap.innerHTML = '<div class="card" style="text-align:center;padding:2rem;"><div class="spinner" style="width:28px;height:28px;margin:0 auto;"></div><p style="color:var(--muted2);margin-top:1rem;">Mengecek status...</p></div>';
+
+  try {
+    const res = await fetch(`/api/cek-status-order?orderId=${encodeURIComponent(id)}`);
+    const json = await res.json();
+    renderResult(json, id);
+  } catch(e) {
+    wrap.innerHTML = '<div class="card empty-state"><div class="icon">⚠️</div><h3>Gagal mengecek status</h3><p>Coba lagi beberapa saat.</p></div>';
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Cek';
+  }
+}
+
+function renderResult(data, id) {
+  const wrap = document.getElementById('result-wrap');
+  const isSuccess = data.success || data.status === true;
+  const orderData = data.data || data;
+  const status = orderData.status || 'unknown';
+
+  const statusMap = {
+    success: { label: 'Sukses', cls: 'success', icon: '✅', badgeCls: 'badge-success' },
+    pending: { label: 'Pending', cls: 'pending', icon: '⏳', badgeCls: 'badge-warning' },
+    process: { label: 'Diproses', cls: 'pending', icon: '⚙️', badgeCls: 'badge-purple' },
+    failed: { label: 'Gagal', cls: 'failed', icon: '❌', badgeCls: 'badge-danger' },
+    unknown: { label: 'Tidak Diketahui', cls: 'pending', icon: '❓', badgeCls: 'badge-gray' },
+  };
+  const s = statusMap[status] || statusMap.unknown;
+
+  const rows = [
+    ['ID Order', id],
+    ['Status', `<span class="badge ${s.badgeCls}">${s.label}</span>`],
+    orderData.game_name ? ['Game', orderData.game_name] : null,
+    orderData.product_name ? ['Produk', orderData.product_name] : null,
+    orderData.target_id ? ['Target ID', orderData.target_id] : null,
+    orderData.price ? ['Harga', 'Rp ' + parseInt(orderData.price).toLocaleString('id-ID')] : null,
+    orderData.sn ? ['Serial Number', `<span style="font-family:monospace;font-size:0.85rem;">${orderData.sn}</span>`] : null,
+    orderData.created_at ? ['Tanggal', new Date(orderData.created_at).toLocaleString('id-ID')] : null,
+  ].filter(Boolean);
+
+  wrap.innerHTML = `
+    <div class="status-card">
+      <div class="status-header">
+        <div class="status-icon ${s.cls}">${s.icon}</div>
+        <div>
+          <h3 style="font-weight:700;font-size:1.05rem;">Order ${s.label}</h3>
+          <p style="color:var(--muted2);font-size:0.85rem;margin-top:0.2rem;">
+            ${status === 'success' ? 'Transaksi berhasil diproses.' : status === 'failed' ? 'Transaksi gagal diproses.' : 'Transaksi sedang diproses...'}
+          </p>
+        </div>
+      </div>
+      <div class="status-body">
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              ${rows.map(([k, v]) => `<tr><td style="color:var(--muted);width:40%;">${k}</td><td><strong>${v}</strong></td></tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+        ${status === 'success' ? `
+          <div style="margin-top:1.5rem;padding:1.25rem;background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);border-radius:var(--radius);text-align:center;">
+            <div style="font-size:1.5rem;margin-bottom:0.5rem;">🎉</div>
+            <h4 style="font-weight:700;color:var(--success);margin-bottom:0.25rem;">Top Up Berhasil!</h4>
+            <p style="font-size:0.85rem;color:var(--muted2);">Item sudah masuk ke akun game kamu.</p>
+          </div>
+        ` : status === 'pending' || status === 'process' ? `
+          <div style="margin-top:1.5rem;text-align:center;">
+            <button class="btn btn-outline" onclick="cekStatusOrder('${id}')">🔄 Refresh Status</button>
+          </div>
+        ` : ''}
+        <div style="margin-top:1.25rem;text-align:center;">
+          <a href="/topup" class="btn btn-secondary btn-sm">Top Up Lagi</a>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function showToast(msg, type='info') {
+  const tc = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+  t.innerHTML = `<span class="toast-icon">${icons[type]}</span> ${msg}`;
+  tc.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+</script>
+</body>
+</html>
