@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pembayaran — Malzz Pedia</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="navbar">
+  <a href="/" class="nav-logo">Malzz Pedia</a>
+  <ul class="nav-links">
+    <li><a href="/">Beranda</a></li>
+    <li><a href="/topup">Top Up</a></li>
+    <li><a href="/products">Produk</a></li>
+    <li><a href="/status">Cek Status</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrap">
+  <div class="container section">
+    <div style="max-width:640px;margin:0 auto;">
+
+      <!-- Steps -->
+      <div class="steps mb-3">
+        <div class="step done">
+          <div class="step-num">✓</div>
+          <div class="step-label">Pilih Layanan</div>
+        </div>
+        <div class="step-line done"></div>
+        <div class="step active">
+          <div class="step-num">2</div>
+          <div class="step-label">Pembayaran</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step pending">
+          <div class="step-num">3</div>
+          <div class="step-label">Selesai</div>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loading-state" class="card" style="text-align:center;padding:3rem;">
+        <div class="spinner" style="width:32px;height:32px;margin:0 auto 1rem;"></div>
+        <p style="color:var(--muted2);">Memuat detail pembayaran...</p>
+      </div>
+
+      <!-- Error State -->
+      <div id="error-state" class="card" style="display:none;text-align:center;padding:3rem;">
+        <div style="font-size:2.5rem;margin-bottom:1rem;">⚠️</div>
+        <h3 style="margin-bottom:0.5rem;">Transaksi Tidak Ditemukan</h3>
+        <p style="color:var(--muted2);margin-bottom:1.5rem;">ID transaksi tidak valid atau sudah kedaluwarsa.</p>
+        <a href="/topup" class="btn btn-primary">Buat Transaksi Baru</a>
+      </div>
+
+      <!-- Payment Content -->
+      <div id="payment-content" style="display:none;">
+        <!-- Amount -->
+        <div class="card mb-3" style="text-align:center;padding:2rem;">
+          <p style="color:var(--muted);font-size:0.85rem;margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.04em;font-weight:600;">Total Pembayaran</p>
+          <div class="amount-display" id="pay-amount">Rp 0</div>
+          <div style="margin-top:1rem;display:flex;align-items:center;justify-content:center;gap:0.5rem;">
+            <span style="font-size:0.8rem;color:var(--muted);">Batas waktu:</span>
+            <span class="countdown" id="countdown">--:--</span>
+          </div>
+        </div>
+
+        <!-- QRIS / Payment Details -->
+        <div class="card mb-3">
+          <h3 style="font-weight:700;margin-bottom:1.25rem;">Cara Bayar</h3>
+
+          <div style="display:flex;gap:0.5rem;margin-bottom:1.25rem;">
+            <button class="btn btn-secondary btn-sm" onclick="switchTab('qris', this)" id="tab-qris" style="border-radius:var(--radius-sm);">QRIS</button>
+            <button class="btn btn-outline btn-sm" onclick="switchTab('bank', this)" id="tab-bank" style="border-radius:var(--radius-sm);">Transfer</button>
+          </div>
+
+          <!-- QRIS -->
+          <div id="tab-qris-content">
+            <div style="text-align:center;margin-bottom:1.25rem;">
+              <div id="qris-wrap">
+                <div class="qr-box" style="margin:0 auto;display:inline-flex;">
+                  <div id="qr-placeholder" style="width:200px;height:200px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:0.85rem;background:#f8f9fa;">
+                    <span style="color:#333;">QR Code akan muncul di sini</span>
+                  </div>
+                  <img id="qr-img" src="" alt="QRIS" style="display:none;max-width:200px;" onerror="this.style.display='none'">
+                </div>
+              </div>
+              <p style="font-size:0.8rem;color:var(--muted);margin-top:1rem;">Scan QR Code menggunakan aplikasi pembayaran apapun</p>
+            </div>
+          </div>
+
+          <!-- Bank Transfer -->
+          <div id="tab-bank-content" style="display:none;">
+            <div id="bank-details">
+              <p style="color:var(--muted2);font-size:0.875rem;text-align:center;padding:1rem;">Gunakan metode QRIS untuk pembayaran yang lebih mudah.</p>
+            </div>
+          </div>
+
+          <!-- No Ref -->
+          <div>
+            <p style="font-size:0.8rem;color:var(--muted);margin-bottom:0.4rem;font-weight:600;">Nomor Referensi</p>
+            <div class="copy-field">
+              <span id="trx-id-display">—</span>
+              <button class="copy-btn" onclick="copyText('trx-id-display')">Salin</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="card mb-3">
+          <h3 style="font-weight:700;margin-bottom:1rem;">Panduan Bayar via QRIS</h3>
+          <div style="display:flex;flex-direction:column;gap:0.75rem;">
+            <div style="display:flex;gap:0.75rem;align-items:flex-start;">
+              <span style="width:24px;height:24px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0;">1</span>
+              <p style="font-size:0.875rem;color:var(--muted2);">Buka aplikasi pembayaran seperti GoPay, OVO, Dana, ShopeePay, atau mobile banking apapun.</p>
+            </div>
+            <div style="display:flex;gap:0.75rem;align-items:flex-start;">
+              <span style="width:24px;height:24px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0;">2</span>
+              <p style="font-size:0.875rem;color:var(--muted2);">Pilih fitur scan QR / QRIS lalu scan QR Code di atas.</p>
+            </div>
+            <div style="display:flex;gap:0.75rem;align-items:flex-start;">
+              <span style="width:24px;height:24px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0;">3</span>
+              <p style="font-size:0.875rem;color:var(--muted2);">Konfirmasi jumlah pembayaran dan selesaikan transaksi.</p>
+            </div>
+            <div style="display:flex;gap:0.75rem;align-items:flex-start;">
+              <span style="width:24px;height:24px;border-radius:50%;background:var(--success);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0;">✓</span>
+              <p style="font-size:0.875rem;color:var(--muted2);">Top up akan diproses otomatis setelah pembayaran dikonfirmasi.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Check -->
+        <div class="card" style="text-align:center;padding:1.5rem;">
+          <p style="color:var(--muted2);font-size:0.875rem;margin-bottom:0.75rem;">Sudah bayar? Kami akan mengecek otomatis setiap 5 detik.</p>
+          <div id="check-status-wrap">
+            <div style="display:flex;align-items:center;justify-content:center;gap:0.5rem;">
+              <div class="spinner" style="width:16px;height:16px;"></div>
+              <span style="font-size:0.875rem;color:var(--muted2);">Menunggu pembayaran...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const trxId = params.get('trxId');
+let paymentData = null;
+let countdownInterval = null;
+let checkInterval = null;
+
+function switchTab(tab, el) {
+  document.getElementById('tab-qris-content').style.display = tab === 'qris' ? 'block' : 'none';
+  document.getElementById('tab-bank-content').style.display = tab === 'bank' ? 'block' : 'none';
+  document.getElementById('tab-qris').className = tab === 'qris' ? 'btn btn-secondary btn-sm' : 'btn btn-outline btn-sm';
+  document.getElementById('tab-bank').className = tab === 'bank' ? 'btn btn-secondary btn-sm' : 'btn btn-outline btn-sm';
+}
+
+function copyText(id) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => showToast('Disalin!', 'success'));
+}
+
+function startCountdown(expiry) {
+  const el = document.getElementById('countdown');
+  countdownInterval = setInterval(() => {
+    const now = Date.now();
+    const diff = expiry - now;
+    if (diff <= 0) {
+      el.textContent = '00:00';
+      clearInterval(countdownInterval);
+      document.getElementById('check-status-wrap').innerHTML = '<span style="color:var(--danger);font-size:0.875rem;">⏰ Waktu pembayaran habis</span>';
+      return;
+    }
+    const m = Math.floor(diff / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  }, 1000);
+}
+
+async function init() {
+  if (!trxId) {
+    document.getElementById('loading-state').style.display = 'none';
+    document.getElementById('error-state').style.display = 'block';
+    return;
+  }
+  document.getElementById('trx-id-display').textContent = trxId;
+  document.getElementById('loading-state').style.display = 'none';
+  document.getElementById('payment-content').style.display = 'block';
+  startAutoCheck();
+}
+
+async function checkPaymentStatus() {
+  try {
+    const res = await fetch(`/api/cek-status-deposit?trxId=${trxId}`);
+    const json = await res.json();
+    if (json.depositStatus === 'success') {
+      clearInterval(checkInterval);
+      clearInterval(countdownInterval);
+      if (json.orderId) {
+        window.location.href = `/status?orderId=${json.orderId}`;
+      } else {
+        document.getElementById('check-status-wrap').innerHTML = '<span class="text-success">✅ Pembayaran diterima! Memproses order...</span>';
+        setTimeout(() => window.location.href = `/status?trxId=${trxId}`, 2000);
+      }
+    }
+  } catch(e) {}
+}
+
+function startAutoCheck() {
+  // Start 24 min countdown (default)
+  startCountdown(Date.now() + 24 * 60 * 1000);
+  checkInterval = setInterval(checkPaymentStatus, 5000);
+}
+
+function showToast(msg, type='info') {
+  const tc = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+  t.innerHTML = `<span class="toast-icon">${icons[type]}</span> ${msg}`;
+  tc.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+// Set amount from session/state if available
+const storedAmount = sessionStorage.getItem('topup_amount');
+if (storedAmount) {
+  document.getElementById('pay-amount').textContent = 'Rp ' + parseInt(storedAmount).toLocaleString('id-ID');
+}
+
+init();
+</script>
+</body>
+</html>
